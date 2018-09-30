@@ -1,0 +1,19 @@
+.Server {
+  margin: 15px 0;
+  user-select: none;
+}
+
+.Server:hover {
+  opacity: 0.7;
+}
+
+.Server-img {
+  height: 80px;
+  min-width: 210px;
+  margin-bottom: 10px;
+}
+
+.Server-name {
+  color: white;
+  font-size: large;
+}
