@@ -1,0 +1,32 @@
+.Application {
+  display: flex;
+  margin: 10px;
+}
+
+.Application-add,
+.Application-remove,
+.Application-name {
+  font-size: 1.2em;
+}
+
+.Application-add:hover,
+.Application-remove:hover {
+  background-color: rgb(167, 163, 163, 0.3);
+}
+
+.Application-add:focus,
+.Application-remove:focus {
+  outline: none;
+}
+
+.Application-name {
+  align-self: center;
+}
+
+.Application-add {
+  margin: 0 5px 0 20px;
+}
+
+.Application-remove {
+  margin: 0 10px 0 0;
+}

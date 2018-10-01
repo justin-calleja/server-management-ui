@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ServerCanvas from "./containers/ServerCanvas/ServerCanvas";
-// import Modal from "./components/Modal/Modal";
-// import ServerInfo from "./components/ServerInfo/ServerInfo";
+import Application from "./components/Application/Application";
 import "./App.css";
 
 class App extends Component {
@@ -13,17 +12,13 @@ class App extends Component {
   render() {
     return (
       <React.Fragment>
-        {/* <Modal
-          show={this.state.editingServerMode}
-          onBackdropClick={this.closeEditServerModal}
-        >
-          {this.state.server ? <ServerInfo {...this.state.server} /> : null}
-        </Modal> */}
         <ServerCanvas onServerClick={this.openEditServerModal} />
 
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <div className="App-container">
+          <Application name="App A" />
+          <Application name="App B" />
+          <Application name="App C" />
+        </div>
       </React.Fragment>
     );
   }
