@@ -20,33 +20,3 @@
 .ServerCanvas-controls {
   padding-bottom: 10px;
 }
-
-.ServerCanvas-btn {
-  border: none;
-  background-color: white;
-  color: black;
-  padding: 15px 32px;
-  margin: 0 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  user-select: none;
-
-  -webkit-transition-duration: 0.5s;
-  transition-duration: 0.5s;
-}
-
-.ServerCanvas-btn.destroy:hover {
-  background-color: #f44336;
-  color: white;
-}
-
-.ServerCanvas-btn.add:hover {
-  background-color: #4caf50;
-  color: white;
-}
-
-.ServerCanvas-btn:active {
-  filter: saturate(200%);
-}

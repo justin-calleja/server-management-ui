@@ -3,11 +3,8 @@ import generate from "project-name-generator";
 import Server from "../../components/Server/Server";
 import ServerInfo from "../../components/ServerInfo/ServerInfo";
 import Modal from "../../components/Modal/Modal";
+import Button from "../../components/Button/Button";
 import "./ServerCanvas.css";
-
-// function generateName() {
-//   return generate({ words: 2 }).dashed;
-// }
 
 class ServerCanvas extends Component {
   constructor(props) {
@@ -36,6 +33,26 @@ class ServerCanvas extends Component {
   static defaultProps = {
     serverCount: 4
   };
+
+  static removeServerByName(servers, name) {
+    const newServers = { ...servers };
+    delete newServers[name];
+    return newServers;
+  }
+
+  static addServer(servers, server) {
+    if (servers[server.name] !== undefined) {
+      console.error(
+        `The server with the name "${server.name}" already exists.`
+      );
+      return servers;
+    }
+
+    const newServers = { ...servers };
+    newServers[server.name] = server;
+
+    return newServers;
+  }
 
   generateServerName = () => {
     // generateServerName is being used before setting the state for the first time in the constructor.
@@ -86,41 +103,21 @@ class ServerCanvas extends Component {
       const { name: lastServerName } = serversAsArr[serversAsArr.length - 1];
 
       return {
-        servers: this.removeServerByName(servers, lastServerName)
+        servers: ServerCanvas.removeServerByName(servers, lastServerName)
       };
     });
   };
 
   onDestroyFocusedServer = () => {
     this.setState(({ servers, focusedServer }) => ({
-      servers: this.removeServerByName(servers, focusedServer.name)
+      servers: ServerCanvas.removeServerByName(servers, focusedServer.name)
     }));
     this.closeEditServerModal();
   };
 
-  removeServerByName(servers, name) {
-    const newServers = { ...servers };
-    delete newServers[name];
-    return newServers;
-  }
-
-  addServer(servers, server) {
-    if (servers[server.name] !== undefined) {
-      console.error(
-        `The server with the name "${server.name}" already exists.`
-      );
-      return servers;
-    }
-
-    const newServers = { ...servers };
-    newServers[server.name] = server;
-
-    return newServers;
-  }
-
   onAddServer = () => {
     this.setState(({ servers }) => ({
-      servers: this.addServer(servers, {
+      servers: ServerCanvas.addServer(servers, {
         name: this.generateServerName(),
         app1: { name: null, state: Server.appStateNames.none },
         app2: { name: null, state: Server.appStateNames.none },
@@ -149,15 +146,12 @@ class ServerCanvas extends Component {
           <h1 className="ServerCanvas-title">Server Canvas</h1>
           <div className="ServerCanvas-server-container">{serverElements}</div>
           <div className="ServerCanvas-controls">
-            <button
-              className="ServerCanvas-btn destroy"
-              onClick={this.onDestroyLastServer}
-            >
+            <Button className="destroy" onClick={this.onDestroyLastServer}>
               Destroy
-            </button>
-            <button className="ServerCanvas-btn add" onClick={this.onAddServer}>
+            </Button>
+            <Button className="add" onClick={this.onAddServer}>
               Add Server
-            </button>
+            </Button>
           </div>
         </div>
       </React.Fragment>
