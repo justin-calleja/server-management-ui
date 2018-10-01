@@ -1,9 +1,17 @@
 import React, { Component } from "react";
-import generate from "project-name-generator";
+import PropTypes from "prop-types";
 import Server from "../../components/Server/Server";
 import ServerInfo from "../../components/ServerInfo/ServerInfo";
 import Modal from "../../components/Modal/Modal";
 import Button from "../../components/Button/Button";
+import {
+  newServer,
+  destroyServerByName,
+  addServer,
+  generateServerName,
+  findLastServerName,
+  addApp
+} from "./utils";
 import "./ServerCanvas.css";
 
 class ServerCanvas extends Component {
@@ -15,10 +23,8 @@ class ServerCanvas extends Component {
     const servers = {};
     let serverName = null;
     for (let i = 0; i < serverCount; i++) {
-      serverName = this.generateServerName();
-      servers[serverName] = ServerCanvas.newServer({
-        name: serverName
-      });
+      serverName = this.generateUniqueServerName();
+      servers[serverName] = newServer(serverName);
     }
 
     this.state = {
@@ -32,43 +38,23 @@ class ServerCanvas extends Component {
     serverCount: 4
   };
 
-  static newServer(args) {
-    return {
-      ...args,
-      app1: { name: null, appState: Server.appStateNames.none },
-      app2: { name: null, appState: Server.appStateNames.none }
-    };
-  }
+  static propTypes = {
+    serverCount: PropTypes.number,
+    // The children prop is a function which receives the following callbacks (in an object):
+    // { onAppAdd, onAppRemove }
+    children: PropTypes.func
+  };
 
-  static removeServerByName(servers, name) {
-    const newServers = { ...servers };
-    delete newServers[name];
-    return newServers;
-  }
-
-  static addServer(servers, server) {
-    if (servers[server.name] !== undefined) {
-      console.error(
-        `The server with the name "${server.name}" already exists.`
-      );
-      return servers;
-    }
-
-    const newServers = { ...servers };
-    newServers[server.name] = server;
-
-    return newServers;
-  }
-
-  generateServerName = () => {
-    // generateServerName is being used before setting the state for the first time in the constructor.
-    if (!this.state) return generate({ words: 2 }).dashed;
+  generateUniqueServerName = () => {
+    // generateUniqueServerName is being used before setting the state for the first time in the constructor.
+    if (!this.state) return generateServerName();
 
     let name = null;
 
+    // Since I have no guarantee that "generateServerName()" will give me a unique name,
     // keep trying to generate a server name until you get one which is not already being used:
     do {
-      name = generate({ words: 2 }).dashed;
+      name = generateServerName();
     } while (this.state.servers[name] !== undefined);
 
     return name;
@@ -103,39 +89,41 @@ class ServerCanvas extends Component {
 
   onDestroyLastServer = () => {
     this.setState(({ servers }) => {
-      const serversAsArr = Object.values(servers);
-      if (serversAsArr.length < 1) return { servers };
+      const lastServerName = findLastServerName(servers);
 
-      const { name: lastServerName } = serversAsArr[serversAsArr.length - 1];
-
-      return {
-        servers: ServerCanvas.removeServerByName(servers, lastServerName)
-      };
+      return lastServerName
+        ? { servers: destroyServerByName(servers, lastServerName) }
+        : // avoid changing state if there is no lastServerName (avoid re-render)
+          null;
     });
   };
 
   onDestroyFocusedServer = () => {
     this.setState(({ servers, focusedServer }) => ({
-      servers: ServerCanvas.removeServerByName(servers, focusedServer.name)
+      servers: destroyServerByName(servers, focusedServer.name)
     }));
     this.closeEditServerModal();
   };
 
   onAddServer = () => {
     this.setState(({ servers }) => ({
-      servers: ServerCanvas.addServer(
-        servers,
-        ServerCanvas.newServer({ name: this.generateServerName() })
-      )
+      servers: addServer(servers, newServer(this.generateUniqueServerName()))
     }));
   };
 
-  onAppAdd = arg => {
-    console.log("in onAppAdd", arg);
+  onAppAdd = appName => {
+    this.setState(({ servers }) => {
+      const { servers: newServers, server } = addApp(servers, appName);
+      // avoid re-render if state is not changed
+      if (server === null) return null;
+      return {
+        servers: newServers
+      };
+    });
   };
 
-  onAppRemove = arg => {
-    console.log("in onAppRemove", arg);
+  onAppRemove = appName => {
+    console.log("in onAppRemove", appName);
   };
 
   render() {
