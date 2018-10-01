@@ -36,3 +36,8 @@
   background-color: #4caf50;
   color: white;
 }
+
+.Button.cancel {
+  background-color: rgb(167, 163, 163);
+  color: white;
+}

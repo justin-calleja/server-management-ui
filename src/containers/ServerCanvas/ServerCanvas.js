@@ -139,6 +139,7 @@ class ServerCanvas extends Component {
             <ServerInfo
               {...this.state.focusedServer}
               onDestroy={this.onDestroyFocusedServer}
+              onCancel={this.closeEditServerModal}
             />
           ) : null}
         </Modal>
