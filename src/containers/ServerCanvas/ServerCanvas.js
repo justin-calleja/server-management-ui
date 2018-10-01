@@ -16,11 +16,9 @@ class ServerCanvas extends Component {
     let serverName = null;
     for (let i = 0; i < serverCount; i++) {
       serverName = this.generateServerName();
-      servers[serverName] = {
-        name: serverName,
-        app1: { name: null, state: Server.appStateNames.none },
-        app2: { name: null, state: Server.appStateNames.none }
-      };
+      servers[serverName] = ServerCanvas.newServer({
+        name: serverName
+      });
     }
 
     this.state = {
@@ -33,6 +31,14 @@ class ServerCanvas extends Component {
   static defaultProps = {
     serverCount: 4
   };
+
+  static newServer(args) {
+    return {
+      ...args,
+      app1: { name: null, appState: Server.appStateNames.none },
+      app2: { name: null, appState: Server.appStateNames.none }
+    };
+  }
 
   static removeServerByName(servers, name) {
     const newServers = { ...servers };
@@ -117,16 +123,23 @@ class ServerCanvas extends Component {
 
   onAddServer = () => {
     this.setState(({ servers }) => ({
-      servers: ServerCanvas.addServer(servers, {
-        name: this.generateServerName(),
-        app1: { name: null, state: Server.appStateNames.none },
-        app2: { name: null, state: Server.appStateNames.none },
-        onClick: this.openEditServerModal
-      })
+      servers: ServerCanvas.addServer(
+        servers,
+        ServerCanvas.newServer({ name: this.generateServerName() })
+      )
     }));
   };
 
+  onAppAdd = arg => {
+    console.log("in onAppAdd", arg);
+  };
+
+  onAppRemove = arg => {
+    console.log("in onAppRemove", arg);
+  };
+
   render() {
+    const { children } = this.props;
     const serverElements = this.getServerElements();
 
     return (
@@ -155,6 +168,10 @@ class ServerCanvas extends Component {
             </Button>
           </div>
         </div>
+        {children({
+          onAppAdd: this.onAppAdd,
+          onAppRemove: this.onAppRemove
+        })}
       </React.Fragment>
     );
   }

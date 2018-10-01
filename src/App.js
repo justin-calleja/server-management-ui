@@ -3,23 +3,32 @@ import ServerCanvas from "./containers/ServerCanvas/ServerCanvas";
 import Application from "./components/Application/Application";
 import "./App.css";
 
+// It happens that App could be just a functional component in this e.g. app but I'd rather keep it class based in case any app-level state
+// needs to kept "later on".
 class App extends Component {
-  // state = {
-  //   editingServerMode: false,
-  //   server: null
-  // };
-
   render() {
     return (
-      <React.Fragment>
-        <ServerCanvas onServerClick={this.openEditServerModal} />
-
-        <div className="App-container">
-          <Application name="App A" />
-          <Application name="App B" />
-          <Application name="App C" />
-        </div>
-      </React.Fragment>
+      <ServerCanvas serverCount={4}>
+        {({ onAppAdd, onAppRemove }) => (
+          <React.Fragment>
+            <Application
+              name="App A"
+              onAppAdd={onAppAdd}
+              onAppRemove={onAppRemove}
+            />
+            <Application
+              name="App B"
+              onAppAdd={onAppAdd}
+              onAppRemove={onAppRemove}
+            />
+            <Application
+              name="App C"
+              onAppAdd={onAppAdd}
+              onAppRemove={onAppRemove}
+            />
+          </React.Fragment>
+        )}
+      </ServerCanvas>
     );
   }
 }
