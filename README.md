@@ -1,4 +1,4 @@
-This app is running on Github Pages at [https://justin-calleja.github.io/server-management-ui](https://justin-calleja.github.io/server-management-ui)
+This app is running on Github Pages at [https://justin-calleja.github.io/server-management-ui/](https://justin-calleja.github.io/server-management-ui/)
 
 To run locally, first install dependencies with `yarn` or `npm i`.
 

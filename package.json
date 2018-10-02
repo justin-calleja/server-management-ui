@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "https://justin-calleja.github.io/server-management-ui",
   "dependencies": {
+    "gh-pages": "^2.0.0",
     "moment": "^2.22.2",
     "project-name-generator": "^2.1.5",
     "react": "^16.5.2",
@@ -11,6 +12,8 @@
     "react-scripts": "1.1.5"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
