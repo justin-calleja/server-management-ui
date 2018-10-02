@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ServerCanvas from "./containers/ServerCanvas/ServerCanvas";
 import Application from "./components/Application/Application";
-import "./App.css";
 
 // It happens that App could be just a functional component in this e.g. app but I'd rather keep it class based in case any app-level state
 // needs to kept "later on".
