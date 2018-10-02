@@ -3,11 +3,15 @@
 import generate from "project-name-generator";
 import Server from "../../components/Server/Server";
 
+export function nullApp() {
+  return { name: null, appState: Server.appStateNames.none };
+}
+
 export function newServer(name) {
   return {
     name,
-    app1: { name: null, appState: Server.appStateNames.none },
-    app2: { name: null, appState: Server.appStateNames.none }
+    app1: nullApp(),
+    app2: nullApp()
   };
 }
 
@@ -45,7 +49,8 @@ export function findLastServerName(servers) {
 }
 
 /**
- *
+ * Returns given Servers with app added appropriately (if eligible) and server pointing to the Server running the app (or null for server if
+ * app could not be started)
  * @param {import("../..").Servers} servers
  * @param {string} appName
  * @returns {{ servers: import("../..").Servers, server: import("../..").Server }}
@@ -90,14 +95,56 @@ export function addApp(servers, appName) {
   return { servers, server: null };
 }
 
+export function removeApp(servers, appName) {
+  const serversAsArr = Object.values(servers);
+
+  let lastServerRunningApp = null;
+  for (let i = 0, len = serversAsArr.length; i < len; i++) {
+    const currentServer = serversAsArr[i];
+    const { app1, app2 } = currentServer;
+
+    if (appHasName(app1, appName) || appHasName(app2, appName)) {
+      lastServerRunningApp = currentServer;
+    }
+  }
+
+  if (lastServerRunningApp) {
+    if (appHasName(lastServerRunningApp.app1, appName)) {
+      lastServerRunningApp.app1 = nullApp();
+    } else if (appHasName(lastServerRunningApp.app2, appName)) {
+      lastServerRunningApp.app2 = nullApp();
+    }
+
+    return { servers, server: lastServerRunningApp };
+  }
+
+  return { servers, server: null };
+}
+
 /**
  * Unexported functions:
  */
 
+/**
+ *
+ * @param {import("../..").Application} app
+ */
 function noApp(app) {
   return app.appState === Server.appStateNames.none;
 }
 
+/**
+ *
+ * @param {import("../..").Application} app
+ */
 function yesApp(app) {
   return app.appState !== Server.appStateNames.none;
+}
+
+/**
+ *
+ * @param {import("../..").Application} app
+ */
+function appHasName(app, name) {
+  return app.name === name;
 }

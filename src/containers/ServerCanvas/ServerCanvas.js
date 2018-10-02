@@ -10,7 +10,8 @@ import {
   addServer,
   generateServerName,
   findLastServerName,
-  addApp
+  addApp,
+  removeApp
 } from "./utils";
 import "./ServerCanvas.css";
 
@@ -116,14 +117,17 @@ class ServerCanvas extends Component {
       const { servers: newServers, server } = addApp(servers, appName);
       // avoid re-render if state is not changed
       if (server === null) return null;
-      return {
-        servers: newServers
-      };
+      return { servers: newServers };
     });
   };
 
   onAppRemove = appName => {
-    console.log("in onAppRemove", appName);
+    this.setState(({ servers }) => {
+      const { servers: newServers, server } = removeApp(servers, appName);
+      // avoid re-render if state is not changed
+      if (server === null) return null;
+      return { servers: newServers };
+    });
   };
 
   render() {
