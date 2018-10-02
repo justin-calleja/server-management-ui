@@ -8,7 +8,7 @@ const servers1 = {
 };
 
 test("tmp test", () => {
-  expect(addApp(servers1, "app A")).toEqual({
+  expect(addApp(servers1, "app A")).toMatchObject({
     servers: {
       "agreeable-twist": {
         name: "agreeable-twist",

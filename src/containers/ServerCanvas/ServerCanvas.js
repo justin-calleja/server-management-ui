@@ -11,9 +11,15 @@ import {
   generateServerName,
   findLastServerName,
   addApp,
-  removeApp
+  removeApp,
+  random,
+  runApp
 } from "./utils";
 import "./ServerCanvas.css";
+
+const randomFrom1000To = random(1000);
+// randomMilliseconds gives you a number from 1000 to 5000:
+const randomMilliseconds = () => randomFrom1000To(5000);
 
 class ServerCanvas extends Component {
   constructor(props) {
@@ -33,6 +39,9 @@ class ServerCanvas extends Component {
       editingServerMode: false,
       focusedServer: null
     };
+
+    // keep track of any timers to clear onComponentWill
+    this.timeouts = [];
   }
 
   static defaultProps = {
@@ -45,6 +54,12 @@ class ServerCanvas extends Component {
     // { onAppAdd, onAppRemove }
     children: PropTypes.func
   };
+
+  componentWillUnmount() {
+    for (let i = 0; i < this.timeouts.length; i++) {
+      clearTimeout(this.timeouts[i]);
+    }
+  }
 
   generateUniqueServerName = () => {
     // generateUniqueServerName is being used before setting the state for the first time in the constructor.
@@ -114,9 +129,29 @@ class ServerCanvas extends Component {
 
   onAppAdd = appName => {
     this.setState(({ servers }) => {
-      const { servers: newServers, server } = addApp(servers, appName);
+      const { servers: newServers, server, app } = addApp(servers, appName);
       // avoid re-render if state is not changed
       if (server === null) return null;
+
+      // set a timeout to "resolve" the creation of the app and set its appState to "run"
+      this.timeouts.push(
+        setTimeout(() => {
+          this.setState(({ servers: serversAfterTimeout }) => {
+            const newServersAfterTimeout = { ...serversAfterTimeout };
+
+            const serverWithAppToRun = Object.values(
+              newServersAfterTimeout
+            ).find(s => s.name === server.name);
+
+            runApp(serverWithAppToRun, app);
+
+            return {
+              servers: newServersAfterTimeout
+            };
+          });
+        }, randomMilliseconds())
+      );
+
       return { servers: newServers };
     });
   };

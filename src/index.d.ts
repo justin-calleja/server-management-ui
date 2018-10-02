@@ -1,6 +1,9 @@
+import { Moment } from "moment";
+
 export interface Application {
   name: string;
   appState: AppState;
+  startedAt?: Moment;
 }
 
 export interface Server {
