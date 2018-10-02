@@ -122,14 +122,10 @@ export function removeApp(servers, appName) {
 }
 
 /**
- * Unexported functions:
- */
-
-/**
  *
  * @param {import("../..").Application} app
  */
-function noApp(app) {
+export function noApp(app) {
   return app.appState === Server.appStateNames.none;
 }
 
@@ -137,7 +133,7 @@ function noApp(app) {
  *
  * @param {import("../..").Application} app
  */
-function yesApp(app) {
+export function yesApp(app) {
   return app.appState !== Server.appStateNames.none;
 }
 
@@ -145,6 +141,6 @@ function yesApp(app) {
  *
  * @param {import("../..").Application} app
  */
-function appHasName(app, name) {
+export function appHasName(app, name) {
   return app.name === name;
 }
