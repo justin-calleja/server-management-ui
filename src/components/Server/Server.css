@@ -8,7 +8,7 @@
 }
 
 .Server-img {
-  height: 80px;
+  height: 90px;
   min-width: 210px;
   margin-bottom: 10px;
 }
@@ -16,4 +16,24 @@
 .Server-name {
   color: white;
   font-size: large;
+}
+
+.Server-app {
+  margin: 5px;
+}
+
+.Server-fade-in-out {
+  animation: fadeInOutAnimation 1s infinite;
+}
+
+@keyframes fadeInOutAnimation {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

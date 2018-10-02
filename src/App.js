@@ -12,17 +12,32 @@ class App extends Component {
         {({ onAppAdd, onAppRemove }) => (
           <React.Fragment>
             <Application
-              name="App A"
+              name="Prod website"
               onAppAdd={onAppAdd}
               onAppRemove={onAppRemove}
             />
             <Application
-              name="App B"
+              name="Prod database"
               onAppAdd={onAppAdd}
               onAppRemove={onAppRemove}
             />
             <Application
-              name="App C"
+              name="Prod monitoring"
+              onAppAdd={onAppAdd}
+              onAppRemove={onAppRemove}
+            />
+            <Application
+              name="Dev website"
+              onAppAdd={onAppAdd}
+              onAppRemove={onAppRemove}
+            />
+            <Application
+              name="Dev database"
+              onAppAdd={onAppAdd}
+              onAppRemove={onAppRemove}
+            />
+            <Application
+              name="WIP app"
               onAppAdd={onAppAdd}
               onAppRemove={onAppRemove}
             />

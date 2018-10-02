@@ -39,6 +39,8 @@ const Server = ({ name, app1, app2, onClick }) => {
         </g>
       </svg>
       <div className="Server-name">{name}</div>
+      <div className="Server-app">{app1.name}</div>
+      <div className="Server-app">{app2.name}</div>
     </div>
   );
 };
@@ -80,9 +82,25 @@ Server.app1OffCircle = appState => {
 };
 
 Server.app1InitCircle = appState => {
-  const { none, init } = Server.colors;
-  const fill = ["init", "run"].includes(appState) ? init : none;
-  return <circle fill={fill} cx="97" cy="52" r="8" />;
+  const { appStateNames, colors } = Server;
+
+  if (appState === appStateNames.init) {
+    return (
+      <circle
+        className="Server-fade-in-out"
+        fill={colors.init}
+        cx="97"
+        cy="52"
+        r="8"
+      />
+    );
+  }
+
+  if (appState === appStateNames.run) {
+    return <circle fill={colors.init} cx="97" cy="52" r="8" />;
+  }
+
+  return <circle fill={colors.none} cx="97" cy="52" r="8" />;
 };
 
 Server.app1RunCircle = appState => {
@@ -98,9 +116,25 @@ Server.app2OffCircle = appState => {
 };
 
 Server.app2InitCircle = appState => {
-  const { none, init } = Server.colors;
-  const fill = ["init", "run"].includes(appState) ? init : none;
-  return <circle fill={fill} cx="97" cy="15" r="8" />;
+  const { appStateNames, colors } = Server;
+
+  if (appState === appStateNames.init) {
+    return (
+      <circle
+        className="Server-fade-in-out"
+        fill={colors.init}
+        cx="97"
+        cy="15"
+        r="8"
+      />
+    );
+  }
+
+  if (appState === appStateNames.run) {
+    return <circle fill={colors.init} cx="97" cy="15" r="8" />;
+  }
+
+  return <circle fill={colors.none} cx="97" cy="15" r="8" />;
 };
 
 Server.app2RunCircle = appState => {
