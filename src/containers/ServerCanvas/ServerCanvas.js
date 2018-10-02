@@ -105,38 +105,36 @@ class ServerCanvas extends Component {
   };
 
   onDestroyLastServer = () => {
-    this.setState(({ servers }) => {
-      const lastServerName = findLastServerName(servers);
-      if (lastServerName) {
-        const { servers: newServers, destroyedServer } = destroyServerByName(
-          servers,
-          lastServerName
-        );
+    const { servers } = this.state;
+    const lastServerName = findLastServerName(servers);
 
+    if (lastServerName) {
+      const { servers: newServers, destroyedServer } = destroyServerByName(
+        servers,
+        lastServerName
+      );
+
+      this.setState({ servers: newServers }, () => {
         const runningAppNames = getRunningAppNames(destroyedServer);
         runningAppNames.forEach(appName => this.onAppAdd(appName));
-
-        return { servers: newServers };
-      }
-
-      // avoid changing state if there is no lastServerName (avoid re-render)
-      return null;
-    });
+      });
+    }
   };
 
   onDestroyFocusedServer = () => {
-    this.setState(({ servers, focusedServer }) => {
-      const { servers: newServers, destroyedServer } = destroyServerByName(
-        servers,
-        focusedServer.name
-      );
+    const { servers, focusedServer } = this.state;
 
+    const { servers: newServers, destroyedServer } = destroyServerByName(
+      servers,
+      focusedServer.name
+    );
+
+    this.setState({ servers: newServers }, () => {
       const runningAppNames = getRunningAppNames(destroyedServer);
       runningAppNames.forEach(appName => this.onAppAdd(appName));
 
-      return { servers: newServers };
+      this.closeEditServerModal();
     });
-    this.closeEditServerModal();
   };
 
   onAddServer = () => {
@@ -146,15 +144,16 @@ class ServerCanvas extends Component {
   };
 
   onAppAdd = appName => {
-    this.setState(({ servers }) => {
-      const { servers: newServers, server, app } = addApp(servers, appName);
-      // avoid re-render if state is not changed
-      if (server === null) return null;
+    const { servers } = this.state;
 
-      this.simulateAppStartup(server, app);
+    const { servers: newServers, server, app } = addApp(servers, appName);
+    // avoid re-render if state is not changed (i.e. could not add app to any servers so server is null)
+    if (server === null) return null;
 
-      return { servers: newServers };
-    });
+    this.setState({ servers: newServers });
+
+    // at this point, we know an app was started on a server so schedule a simulation of it finishing launching
+    this.simulateAppStartup(server, app);
   };
 
   simulateAppStartup = (server, app) => {

@@ -20,7 +20,7 @@ export function newServer(name) {
 
 export function destroyServerByName(servers, name) {
   const newServers = { ...servers };
-  const destroyedServer = newServers[name];
+  const destroyedServer = servers[name];
   delete newServers[name];
   return { servers: newServers, destroyedServer };
 }
