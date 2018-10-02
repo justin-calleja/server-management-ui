@@ -20,8 +20,9 @@ export function newServer(name) {
 
 export function destroyServerByName(servers, name) {
   const newServers = { ...servers };
+  const destroyedServer = newServers[name];
   delete newServers[name];
-  return newServers;
+  return { servers: newServers, destroyedServer };
 }
 
 export function addServer(servers, server) {
@@ -128,6 +129,13 @@ export function removeApp(servers, appName) {
   }
 
   return { servers, server: null };
+}
+
+export function getRunningAppNames(server) {
+  const runningAppNames = [];
+  if (yesApp(server.app1)) runningAppNames.push(server.app1.name);
+  if (yesApp(server.app2)) runningAppNames.push(server.app2.name);
+  return runningAppNames;
 }
 
 /**

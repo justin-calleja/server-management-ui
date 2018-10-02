@@ -13,7 +13,8 @@ import {
   addApp,
   removeApp,
   random,
-  runApp
+  runApp,
+  getRunningAppNames
 } from "./utils";
 import "./ServerCanvas.css";
 
@@ -106,18 +107,35 @@ class ServerCanvas extends Component {
   onDestroyLastServer = () => {
     this.setState(({ servers }) => {
       const lastServerName = findLastServerName(servers);
+      if (lastServerName) {
+        const { servers: newServers, destroyedServer } = destroyServerByName(
+          servers,
+          lastServerName
+        );
 
-      return lastServerName
-        ? { servers: destroyServerByName(servers, lastServerName) }
-        : // avoid changing state if there is no lastServerName (avoid re-render)
-          null;
+        const runningAppNames = getRunningAppNames(destroyedServer);
+        runningAppNames.forEach(appName => this.onAppAdd(appName));
+
+        return { servers: newServers };
+      }
+
+      // avoid changing state if there is no lastServerName (avoid re-render)
+      return null;
     });
   };
 
   onDestroyFocusedServer = () => {
-    this.setState(({ servers, focusedServer }) => ({
-      servers: destroyServerByName(servers, focusedServer.name)
-    }));
+    this.setState(({ servers, focusedServer }) => {
+      const { servers: newServers, destroyedServer } = destroyServerByName(
+        servers,
+        focusedServer.name
+      );
+
+      const runningAppNames = getRunningAppNames(destroyedServer);
+      runningAppNames.forEach(appName => this.onAppAdd(appName));
+
+      return { servers: newServers };
+    });
     this.closeEditServerModal();
   };
 
@@ -133,27 +151,36 @@ class ServerCanvas extends Component {
       // avoid re-render if state is not changed
       if (server === null) return null;
 
-      // set a timeout to "resolve" the creation of the app and set its appState to "run"
-      this.timeouts.push(
-        setTimeout(() => {
-          this.setState(({ servers: serversAfterTimeout }) => {
-            const newServersAfterTimeout = { ...serversAfterTimeout };
-
-            const serverWithAppToRun = Object.values(
-              newServersAfterTimeout
-            ).find(s => s.name === server.name);
-
-            runApp(serverWithAppToRun, app);
-
-            return {
-              servers: newServersAfterTimeout
-            };
-          });
-        }, randomMilliseconds())
-      );
+      this.simulateAppStartup(server, app);
 
       return { servers: newServers };
     });
+  };
+
+  simulateAppStartup = (server, app) => {
+    this.timeouts.push(
+      setTimeout(() => {
+        this.setState(({ servers }) => {
+          const newServers = { ...servers };
+
+          const serverWithAppToRun = Object.values(newServers).find(
+            s => s.name === server.name
+          );
+
+          if (!serverWithAppToRun) {
+            // Server running app (which was still in init appState) was destroyed.
+            // Nothing to re-render (i.e. set the green dot on the server), so return null.
+            return null;
+          }
+
+          runApp(serverWithAppToRun, app);
+
+          return {
+            servers: newServers
+          };
+        });
+      }, randomMilliseconds())
+    );
   };
 
   onAppRemove = appName => {

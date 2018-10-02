@@ -13,12 +13,12 @@ const ServerInfo = ({ name, app1, app2, onDestroy, onCancel }) => {
             <span>… is running:</span>
             <div className="ServerInfo-app-info">
               <span className="ServerInfo-app-name">{app1.name}</span>{" "}
-              <span>status: {app1.appState}</span>
+              <span>: started {app1.startedAt.fromNow()}</span>
             </div>
             {noApp(app2) ? null : (
               <div className="ServerInfo-app-info">
                 <span className="ServerInfo-app-name">{app2.name}</span>{" "}
-                <span>status: {app2.appState}</span>
+                <span>: started {app2.startedAt.fromNow()}</span>
               </div>
             )}
           </React.Fragment>
